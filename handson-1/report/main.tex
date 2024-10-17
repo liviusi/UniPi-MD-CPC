@@ -1,0 +1,160 @@
+\documentclass[12pt]{report}
+% Set page margins
+\usepackage[margin=4cm]{geometry}
+
+\usepackage[]{graphicx}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amsthm} % theorems, examples, definitions
+\usepackage{commath} % norm
+\usepackage{amssymb}
+\usepackage{nicematrix}
+\singlespace % interlinea singola
+
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,
+	urlcolor=blue,
+}
+ 
+% All page numbers positioned at the bottom of the page
+\usepackage{fancyhdr}
+\fancyhf{} % clear all header and footers
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\pagestyle{fancy}
+
+% Changes the style of chapter headings
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
+
+% Change distance between chapter header and text
+\titlespacing{\chapter}{0pt}{35pt}{\baselineskip}
+\usepackage{titlesec}
+\titleformat{\section}
+	[hang] % \textlessshape\textgreater
+	{\normalfont\bfseries\Large} % \textlessformat\textgreater
+	{} % \textlesslabel\textgreater
+	{0pt} % \textlesssep\textgreater
+	{} % \textlessbefore code\textgreater
+\renewcommand{\thesection}{} % Remove section references...
+\renewcommand{\thesection}{\arabic{section}} %... from sections
+\usepackage{titlesec}
+
+\setcounter{tocdepth}{5}
+\setcounter{secnumdepth}{5}
+
+% Prevents LaTeX from filling out a page to the bottom
+\raggedbottom
+
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage{physics}
+\usepackage{minted}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{definition}
+\newtheorem{example}{Example}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{remark}{Remark}
+\newcommand{\iu}{\mathrm{i}\mkern1mu}
+
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
+
+\makeatletter
+\@ifpackageloaded{hyperref}%
+  {\newcommand{\mylabel}[2]% #1=name, #2 = contents
+	{\protected@write\@auxout{}{\string\newlabel{#1}{{#2}{\thepage}%
+	  {\@currentlabelname}{\@currentHref}{}}}}}%
+  {\newcommand{\mylabel}[2]% #1=name, #2 = contents
+	{\protected@write\@auxout{}{\string\newlabel{#1}{{#2}{\thepage}}}}}
+\makeatother
+
+\makeatletter
+\let\original@algocf@latexcaption\algocf@latexcaption
+\long\def\algocf@latexcaption#1[#2]{%
+  \@ifundefined{NR@gettitle}{%
+	\def\@currentlabelname{#2}%
+  }{%
+	\NR@gettitle{#2}%
+  }%
+  \original@algocf@latexcaption{#1}[{#2}]%
+}
+\makeatother
+
+\newcounter{cases}
+\newcounter{subcases}[cases]
+\newenvironment{cs}
+{
+	\setcounter{cases}{0}
+	\setcounter{subcases}{0}
+	\newcommand{\case}
+	{
+		\par\indent\stepcounter{cases}\textbf{Case \thecases.}
+	}
+	\newcommand{\subcase}
+	{
+		\par\indent\stepcounter{subcases}\textit{Subcase (\thesubcases):}
+	}
+}
+{
+	\par
+}
+\renewcommand*\thecases{\arabic{cases}}
+\renewcommand*\thesubcases{\roman{subcases}}
+
+\begin{document}
+\begin{titlepage}
+	\clearpage\thispagestyle{empty}
+	\centering
+	\vspace{1cm}
+
+	\includegraphics[scale=0.58]{../../images/unipi-marchio.eps}
+
+	{\normalsize \noindent Dipartimento di Informatica \\
+			Corso di Laurea in Informatica \par}
+	
+	\vspace{2cm}
+	{\huge \textbf{Assignment 01} \par }
+	\vspace{1cm}
+	{\large Competitive Programming and Contests}
+
+	\vspace{3cm}
+
+	\begin{minipage}[t]{0.47\textwidth}
+		{\large{Prof. Rossano Venturini}}
+	\end{minipage}\hfill\begin{minipage}[t]{0.47\textwidth}\raggedleft
+		{\large {Giacomo Trapani - 600124}}
+	\end{minipage}
+
+	\vspace{3cm}
+
+	{\normalsize Academic Year 2024/2025 \par}
+
+	\pagebreak
+\end{titlepage}
+\paragraph*{Exercise 1}
+This exercise requires the implementation of a method to check if a given tree
+is a \textbf{binary search tree}, which means that for each node its key K must
+be greater than or equal to that of its left child and less than that of its
+right child, we shall refer to this as the ``BST condition''.
+
+For explanation purposes, we shall call \textbf{M} the \textit{root} of the tree,
+\textbf{L} its \textit{left child} and \textbf{R} its \textit{right child}.
+The algorithm implemented checks whether M verifies the BST condition, then it
+performs an in-order traversal of the tree and performs the check mentioned above
+for each node.
+\paragraph*{Exercise 2}
+\end{document}
