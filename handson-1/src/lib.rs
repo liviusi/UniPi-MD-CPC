@@ -39,12 +39,12 @@ impl Tree {
         );
         if is_left {
             assert!(
-                self.nodes[parent_id].id_left == None,
+                self.nodes[parent_id].id_left.is_none(),
                 "Parent node has the left child already set"
             );
         } else {
             assert!(
-                self.nodes[parent_id].id_right == None,
+                self.nodes[parent_id].id_right.is_none(),
                 "Parent node has the right child already set"
             );
         }
@@ -95,13 +95,13 @@ impl Tree {
 
             if let Some(left) = node.id_left {
                 // check whether value in this node > value in its left child
-                if node.key <= (&self.nodes[left]).key {
+                if node.key <= self.nodes[left].key {
                     return false;
                 }
             }
             if let Some(right) = node.id_right {
                 // check whether value in this node <= value in its right child
-                if node.key > (&self.nodes[right]).key {
+                if node.key > self.nodes[right].key {
                     return false;
                 }
             }
