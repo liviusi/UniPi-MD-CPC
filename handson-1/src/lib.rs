@@ -84,35 +84,28 @@ impl Tree {
         0
     }
 
-    pub fn is_bst(&self) -> bool {
-        self.rec_is_bst(Some(0))
+    pub fn inorder_traversal(&self) -> Vec<u32> {
+        let mut result: Vec<u32> = Vec::new();
+        self.rec_inorder_traversal(Some(0), &mut result);
+        result
     }
 
-    fn rec_is_bst(&self, node_id: Option<usize>) -> bool {
-        if let Some(id) = node_id {
-            assert!(id < self.nodes.len(), "Node id is out of range");
-            let node = &self.nodes[id];
-
-            if let Some(left) = node.id_left {
-                // check whether value in this node > value in its left child
-                if node.key <= self.nodes[left].key {
-                    return false;
-                }
+    fn rec_inorder_traversal(&self, node_id: Option<usize>, result: &mut Vec<u32>) {
+        if let Some(node) = node_id {
+            assert!(node < self.nodes.len(), "Node id is out of range");
+            if let Some(left) = self.nodes[node].id_left {
+                self.rec_inorder_traversal(Some(left), result);
             }
-            if let Some(right) = node.id_right {
-                // check whether value in this node <= value in its right child
-                if node.key > self.nodes[right].key {
-                    return false;
-                }
+            result.push(self.nodes[node].key);
+            if let Some(right) = self.nodes[node].id_right {
+                self.rec_inorder_traversal(Some(right), result);
             }
-
-            let is_bst_left = self.rec_is_bst(node.id_left);
-            let is_bst_right = self.rec_is_bst(node.id_right);
-
-            return is_bst_left && is_bst_right;
         }
+    }
 
-        true
+    pub fn is_bst(&self) -> bool {
+        let inorder_vec = self.inorder_traversal();
+        (0..inorder_vec.len() - 1).all(|i| inorder_vec[i] <= inorder_vec[i + 1])
     }
 
     pub fn maximum_path_sum(&self) -> u32 {
@@ -123,7 +116,7 @@ impl Tree {
 
     fn rec_maximum_path_sum(&self, index: Option<usize>, global_max: &mut u32) -> u32 {
         if let Some(index) = index {
-            assert!(index < self.nodes.len(), "Parent node id does not exist");
+            assert!(index < self.nodes.len(), "Node id is out of range");
             let current_node = &self.nodes[index];
 
             let left_sum = self.rec_maximum_path_sum(current_node.id_left, global_max);
