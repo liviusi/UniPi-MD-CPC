@@ -1,11 +1,11 @@
 pub struct Node {
-    key: u32,
+    key: i32,
     id_left: Option<usize>,
     id_right: Option<usize>,
 }
 
 impl Node {
-    fn new(key: u32) -> Self {
+    fn new(key: i32) -> Self {
         Self {
             key,
             id_left: None,
@@ -19,7 +19,7 @@ pub struct Tree {
 }
 
 impl Tree {
-    pub fn with_root(key: u32) -> Self {
+    pub fn with_root(key: i32) -> Self {
         Self {
             nodes: vec![Node::new(key)],
         }
@@ -32,7 +32,7 @@ impl Tree {
     /// # Panics
     /// Panics if the `parent_id` does not exist, or if the node `parent_id ` has  
     /// the child already set.
-    pub fn add_node(&mut self, parent_id: usize, key: u32, is_left: bool) -> usize {
+    pub fn add_node(&mut self, parent_id: usize, key: i32, is_left: bool) -> usize {
         assert!(
             parent_id < self.nodes.len(),
             "Parent node id does not exist"
@@ -64,13 +64,13 @@ impl Tree {
     }
 
     /// Returns the sum of all the keys in the tree
-    pub fn sum(&self) -> u32 {
+    pub fn sum(&self) -> i32 {
         self.rec_sum(Some(0))
     }
 
     /// A private recursive function that computes the sum of
     /// nodes in the subtree rooted at `node_id`.
-    fn rec_sum(&self, node_id: Option<usize>) -> u32 {
+    fn rec_sum(&self, node_id: Option<usize>) -> i32 {
         if let Some(id) = node_id {
             assert!(id < self.nodes.len(), "Node id is out of range");
             let node = &self.nodes[id];
@@ -84,48 +84,56 @@ impl Tree {
         0
     }
 
-    pub fn inorder_traversal(&self) -> Vec<u32> {
-        let mut result: Vec<u32> = Vec::new();
-        self.rec_inorder_traversal(Some(0), &mut result);
-        result
+    pub fn is_bst(&self) -> bool {
+        self.rec_is_bst(Some(0), None, None)
     }
 
-    fn rec_inorder_traversal(&self, node_id: Option<usize>, result: &mut Vec<u32>) {
-        if let Some(node) = node_id {
-            assert!(node < self.nodes.len(), "Node id is out of range");
-            if let Some(left) = self.nodes[node].id_left {
-                self.rec_inorder_traversal(Some(left), result);
-            }
-            result.push(self.nodes[node].key);
-            if let Some(right) = self.nodes[node].id_right {
-                self.rec_inorder_traversal(Some(right), result);
+    fn rec_is_bst(&self, node_id: Option<usize>, min: Option<i32>, max: Option<i32>) -> bool {
+        if let Some(index) = node_id {
+            let node = &self.nodes[index];
+            if (max.is_some() && node.key >= max.unwrap())
+                || (min.is_some() && node.key < min.unwrap())
+            {
+                return false;
+            } else {
+                return self.rec_is_bst(node.id_left, min, Some(node.key))
+                    && self.rec_is_bst(node.id_right, Some(node.key), max);
             }
         }
+        true
     }
 
-    pub fn is_bst(&self) -> bool {
-        let inorder_vec = self.inorder_traversal();
-        (0..inorder_vec.len() - 1).all(|i| inorder_vec[i] <= inorder_vec[i + 1])
+    pub fn maximum_path_sum(&self) -> i32 {
+        if self.nodes.len() <= 1 {
+            return i32::MIN;
+        }
+        let mut max = i32::MIN;
+        self.rec_maximum_path_sum(Some(0), &mut max);
+        max
     }
 
-    pub fn maximum_path_sum(&self) -> u32 {
-        let mut m = u32::MIN;
-        let r = self.rec_maximum_path_sum(Some(0), &mut m);
-        std::cmp::max(r, m)
-    }
-
-    fn rec_maximum_path_sum(&self, index: Option<usize>, global_max: &mut u32) -> u32 {
+    fn rec_maximum_path_sum(&self, index: Option<usize>, global_max: &mut i32) -> i32 {
         if let Some(index) = index {
             assert!(index < self.nodes.len(), "Node id is out of range");
             let current_node = &self.nodes[index];
 
             let left_sum = self.rec_maximum_path_sum(current_node.id_left, global_max);
             let right_sum = self.rec_maximum_path_sum(current_node.id_right, global_max);
+            //println!("[{}]: L {} R {}", index, left_sum, right_sum);
 
-            let current_max_sum = current_node.key + left_sum + right_sum;
-            *global_max = (*global_max).max(current_max_sum);
+            if current_node.id_left.is_some() && current_node.id_right.is_some() {
+                let current_max_sum = current_node.key + left_sum + right_sum;
+                *global_max = (*global_max).max(current_max_sum);
 
-            return current_node.key + left_sum.max(right_sum);
+                return current_node.key + left_sum.max(right_sum);
+            }
+            if current_node.id_left.is_some() {
+                return current_node.key + left_sum;
+            } else if current_node.id_right.is_some() {
+                return current_node.key + right_sum;
+            } else {
+                return current_node.key;
+            }
         }
         0
     }
@@ -183,19 +191,75 @@ mod tests {
     }
 
     #[test]
-    fn test_maximum_path_sum() {
+    fn test_is_bst_3() {
         let mut tree = Tree::with_root(10);
 
-        assert_eq!(tree.maximum_path_sum(), 10);
+        assert_eq!(tree.is_bst(), true);
+
+        tree.add_node(0, 10, false); // id 1
+        tree.add_node(0, 10, true); // id 2
+
+        assert_eq!(tree.is_bst(), false);
+    }
+
+    #[test]
+    fn test_maximum_path_sum_1() {
+        let mut tree = Tree::with_root(10);
+
+        assert_eq!(tree.maximum_path_sum(), i32::MIN);
 
         tree.add_node(0, 5, false); // id 1
         tree.add_node(1, 22, false); // id 2
 
-        assert_eq!(tree.maximum_path_sum(), 37);
+        assert_eq!(tree.maximum_path_sum(), i32::MIN);
 
         tree.add_node(2, 7, false); // id 3
         tree.add_node(3, 20, false); // id 4
 
-        assert_eq!(tree.maximum_path_sum(), 64);
+        assert_eq!(tree.maximum_path_sum(), i32::MIN);
+    }
+
+    #[test]
+    fn test_maximum_path_sum_2() {
+        let mut tree = Tree::with_root(3);
+        tree.add_node(0, 4, true);
+        tree.add_node(0, 5, false);
+        tree.add_node(1, -10, true);
+        tree.add_node(1, 4, false);
+
+        assert_eq!(tree.maximum_path_sum(), 16);
+
+        tree.add_node(2, -3, true);
+        assert_eq!(tree.maximum_path_sum(), 13);
+    }
+
+    #[test]
+    fn test_maximum_path_sum_3() {
+        let mut tree = Tree::with_root(-15); // 0
+        tree.add_node(0, 5, true); // 1
+        tree.add_node(0, 6, false); // 2
+        tree.add_node(1, -8, true); // 3
+        tree.add_node(1, 1, false); // 4
+        tree.add_node(3, 2, true); // 5
+        tree.add_node(3, -3, false); // 6
+        tree.add_node(2, 3, true); // 7
+        tree.add_node(2, 9, false); // 8
+        tree.add_node(8, 0, false); // 9
+        tree.add_node(9, 4, true); // 10
+        tree.add_node(9, -1, false); // 11
+        tree.add_node(11, 10, true); // 12
+
+        assert_eq!(tree.maximum_path_sum(), 27);
+    }
+
+    #[test]
+    fn test_maximum_path_sum_4() {
+        let mut tree = Tree::with_root(-3);
+        tree.add_node(0, -4, true);
+        tree.add_node(0, -5, false);
+        tree.add_node(1, -10, true);
+        tree.add_node(1, -4, false);
+
+        assert_eq!(tree.maximum_path_sum(), -16);
     }
 }
