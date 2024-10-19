@@ -148,13 +148,36 @@
 \paragraph*{Exercise 1}
 This exercise requires the implementation of a method to check if a given tree
 is a \textbf{binary search tree}, which means that for each node its key K must
-be greater than or equal to that of its left child and less than that of its
-right child, we shall refer to this as the ``BST condition''.
+be greater than that of its left child and less than that of its
+right child. For the purposes of this exercise, a relaxation of this condition is
+chosen: duplicates are allowed on one side of the binary search tree.
 
-For explanation purposes, we shall call \textbf{M} the \textit{root} of the tree,
-\textbf{L} its \textit{left child} and \textbf{R} its \textit{right child}.
-The algorithm implemented checks whether M verifies the BST condition, then it
-performs an in-order traversal of the tree and performs the check mentioned above
-for each node.
+The idea behind the algorithm implemented is to work with lower and upper bounds. For
+each node, we check whether its value lies between the bounds, the values of which depend
+on its parent (node).
+
+\includegraphics[scale=0.4]{./images/ex1-range-sample.png}
+
+
+The algorithm implemented takes O(n) time.
 \paragraph*{Exercise 2}
+This exercise requires the implementation of a method to calculate the maximum path sum
+between two leaves in a binary tree. For the purposes of this exercise, we choose to return
+the value \texttt{-i32::MIN} whenever we cannot find a path between two leaves.
+
+\includegraphics[scale=0.4]{images/ex2-trees-no-mps.png}
+
+\pagebreak
+The algorithm implemented measures two different things
+(ref. to \linebreak \texttt{rec\_maximum\_path\_sum}):
+\begin{itemize}
+\item the return value is the maximum path sum for a root-to-leaf path i.e. the maximum
+path sum from \texttt{index} to any of the leaves below,
+\item the value inside the pointer \texttt{global\_max} is the maximum path sum for a
+leaf-to-leaf path i.e. the maximum path sum in the tree rooted in \texttt{index}
+between two of the leaves below it.
+
+
+The algorithm implemented takes O(n) time.
+\end{itemize}
 \end{document}
