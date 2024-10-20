@@ -162,10 +162,13 @@ on its parent (node).
 The algorithm implemented takes O(n) time.
 \paragraph*{Exercise 2}
 This exercise requires the implementation of a method to calculate the maximum path sum
-between two leaves in a binary tree. For the purposes of this exercise, we choose to return
-the value \texttt{-i32::MIN} whenever we cannot find a path between two leaves.
+between two leaves in a binary tree. For the purposes of this exercise,
+the value \texttt{-i32::MIN} has been chosen to be returned whenever we cannot find a path
+between two leaves; also, the implementation of the \texttt{Tree} struct has been changed
+to work with \texttt{i32} values as the previous implementation would not have allowed for
+negative values.
 
-\includegraphics[scale=0.4]{images/ex2-trees-no-mps.png}
+\includegraphics[scale=0.35]{images/ex2-trees-no-mps.png}
 
 \pagebreak
 The algorithm implemented measures two different things
