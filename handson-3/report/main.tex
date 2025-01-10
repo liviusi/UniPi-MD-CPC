@@ -1,0 +1,189 @@
+\documentclass[12pt]{report}
+% Set page margins
+\usepackage[margin=4cm]{geometry}
+
+\usepackage[]{graphicx}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amsthm} % theorems, examples, definitions
+\usepackage{commath} % norm
+\usepackage{amssymb}
+\usepackage{dirtree}
+\usepackage{nicematrix}
+\singlespace % interlinea singola
+
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,
+	urlcolor=blue,
+}
+ 
+% All page numbers positioned at the bottom of the page
+\usepackage{fancyhdr}
+\fancyhf{} % clear all header and footers
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\pagestyle{fancy}
+
+% Changes the style of chapter headings
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
+
+% Change distance between chapter header and text
+\titlespacing{\chapter}{0pt}{35pt}{\baselineskip}
+\usepackage{titlesec}
+\titleformat{\section}
+	[hang] % \textlessshape\textgreater
+	{\normalfont\bfseries\Large} % \textlessformat\textgreater
+	{} % \textlesslabel\textgreater
+	{0pt} % \textlesssep\textgreater
+	{} % \textlessbefore code\textgreater
+\renewcommand{\thesection}{} % Remove section references...
+\renewcommand{\thesection}{\arabic{section}} %... from sections
+\usepackage{titlesec}
+
+\setcounter{tocdepth}{5}
+\setcounter{secnumdepth}{5}
+
+% Prevents LaTeX from filling out a page to the bottom
+\raggedbottom
+
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage{physics}
+\usepackage{minted}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{definition}
+\newtheorem{example}{Example}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{remark}{Remark}
+\newcommand{\iu}{\mathrm{i}\mkern1mu}
+
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
+
+\makeatletter
+\@ifpackageloaded{hyperref}%
+  {\newcommand{\mylabel}[2]% #1=name, #2 = contents
+	{\protected@write\@auxout{}{\string\newlabel{#1}{{#2}{\thepage}%
+	  {\@currentlabelname}{\@currentHref}{}}}}}%
+  {\newcommand{\mylabel}[2]% #1=name, #2 = contents
+	{\protected@write\@auxout{}{\string\newlabel{#1}{{#2}{\thepage}}}}}
+\makeatother
+
+\makeatletter
+\let\original@algocf@latexcaption\algocf@latexcaption
+\long\def\algocf@latexcaption#1[#2]{%
+  \@ifundefined{NR@gettitle}{%
+	\def\@currentlabelname{#2}%
+  }{%
+	\NR@gettitle{#2}%
+  }%
+  \original@algocf@latexcaption{#1}[{#2}]%
+}
+\makeatother
+
+\newcounter{cases}
+\newcounter{subcases}[cases]
+\newenvironment{cs}
+{
+	\setcounter{cases}{0}
+	\setcounter{subcases}{0}
+	\newcommand{\case}
+	{
+		\par\indent\stepcounter{cases}\textbf{Case \thecases.}
+	}
+	\newcommand{\subcase}
+	{
+		\par\indent\stepcounter{subcases}\textit{Subcase (\thesubcases):}
+	}
+}
+{
+	\par
+}
+\renewcommand*\thecases{\arabic{cases}}
+\renewcommand*\thesubcases{\roman{subcases}}
+
+\begin{document}
+\begin{titlepage}
+	\clearpage\thispagestyle{empty}
+	\centering
+	\vspace{1cm}
+
+	\includegraphics[scale=0.58]{../../images/unipi-marchio.eps}
+
+	{\normalsize \noindent Dipartimento di Informatica \\
+			Corso di Laurea in Informatica \par}
+	
+	\vspace{2cm}
+	{\huge \textbf{Assignment 03} \par }
+	\vspace{1cm}
+	{\large Competitive Programming and Contests}
+
+	\vspace{3cm}
+
+	\begin{minipage}[t]{0.47\textwidth}
+		{\large{Prof. Rossano Venturini}}
+	\end{minipage}\hfill\begin{minipage}[t]{0.47\textwidth}\raggedleft
+		{\large {Giacomo Trapani - 600124}}
+	\end{minipage}
+
+	\vspace{3cm}
+
+	{\normalsize Academic Year 2024/2025 \par}
+
+	\pagebreak
+\end{titlepage}
+\paragraph*{Exercise 1}
+This exercise requires the implementation of an algorithm to find out the maximum
+number of attractions which can be visited throughout the holidays given
+constraints on the duration of such holidays, the number of attractions
+per day and the time complexity of the algorithm which is expected to be
+\(O(n \times D^2)\) with \(n\) the number of cities and \(D\) the number of days.
+
+The solution given makes use of dynamic programming:
+\begin{itemize}
+	\item \textbf{base case} \(n = 1\): we can visit either \(D\) attractions or the
+	number of attractions available in the city, whichever is the lowest.
+	\item \textbf{n cities} given the solution for the previous \(n-1\) cities:
+	for every \(x \in [0; D]\), we can spend \(D-x\) days in the optimal solution
+	thus far and \(x\) days in the \(n\)-th city. When we are done, we compare
+	against the previous optimal solution.
+\end{itemize}
+
+The dynamic programming table has size \(n \times D\).
+
+\paragraph*{Exercise 2}
+This exercise requires the implementation of an algorithm to find out the maximum
+number of topics which can be explained throughout a course given constraints on
+their order in \(O(n\times \log(n))\) with \(n\) the number of courses.
+
+Considering every topic as a pair (beauty, difficulty), we sort the topics for
+their beaut, then we run a ``longest increasing sequence" algorithm using their
+difficulty as key.
+
+\paragraph*{How to run}
+The code can be run via \texttt{cargo run}. The following directory structure is
+expected
+\dirtree{%
+.1 src.
+.2 lib.rs.
+.2 main.rs.
+.1 tests-1.
+.1 tests-2.
+.1 Cargo.toml.
+.1 Cargo.lock.
+}
+\end{document}
